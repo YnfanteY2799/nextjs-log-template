@@ -2,7 +2,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
 import jwt from "jsonwebtoken";
 
-export default function handler({ body }: NextApiRequest, res: NextApiResponse<{}>) {
+export interface Status {
+  status: string;
+  valid: boolean;
+}
+
+export default function handler({ body }: NextApiRequest, res: NextApiResponse<Status>) {
   const { userName, password } = JSON.parse(body);
 
   if (userName === "admin@test.com" && password === "123") {
@@ -24,8 +29,8 @@ export default function handler({ body }: NextApiRequest, res: NextApiResponse<{
     });
 
     res.setHeader("Set-Cookie", serialized);
-    res.json({ status: "valid login" });
+    res.json({ status: "valid login", valid: true });
   } else {
-    res.status(401).json({ status: "Done no user found" });
+    res.status(401).json({ status: "Done no user found", valid: false });
   }
 }
